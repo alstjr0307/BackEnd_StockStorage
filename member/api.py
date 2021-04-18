@@ -1,6 +1,14 @@
 from .models import AuthUser, BlogPostcomment, BlogPosts, BlogPostsLikes, DjangoAdminLog, DjangoContentType, DjangoMigrations, TaggitTaggeditem,TaggitTag
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, filters, status, generics
+from django_filters.rest_framework import DjangoFilterBackend
+from knox.models import AuthToken
+from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from rest_framework.response import Response
 
+class PostPageNumberPagination(PageNumberPagination):
+    page_size = 10
 
 
 class AuthUserSerializer(serializers.ModelSerializer):
@@ -10,8 +18,8 @@ class AuthUserSerializer(serializers.ModelSerializer):
 class AuthUserViewSet(viewsets.ModelViewSet):
     queryset =AuthUser.objects.all()
     serializer_class = AuthUserSerializer
-
-
+    filter_backends = [DjangoFilterBackend]
+    filter_fields =('id',)
 
 class BlogPostcommentSerializer(serializers.ModelSerializer):
 
@@ -21,15 +29,23 @@ class BlogPostcommentSerializer(serializers.ModelSerializer):
 class BlogPostcommentViewSet(viewsets.ModelViewSet):
     queryset = BlogPostcomment.objects.all()
     serializer_class = BlogPostcommentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filter_fields =('blogpost_connected',)
+    pagination_class = PostPageNumberPagination
+
 
 class BlogPostsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPosts
         fields = '__all__'
+        
 class BlogPostsViewSet(viewsets.ModelViewSet):
-    queryset = BlogPosts.objects.all()
+    queryset = BlogPosts.objects.order_by('-create_dt').all()
     serializer_class = BlogPostsSerializer
-
+    filter_backends = [DjangoFilterBackend]
+    filter_fields =('category',)
+    pagination_class = PostPageNumberPagination
+    
 class BlogPostsLikesSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPostsLikes
@@ -77,3 +93,4 @@ class TaggitTaggeditemSerializer(serializers.ModelSerializer):
 class TaggitTaggeditemViewSet(viewsets.ModelViewSet):
     queryset = TaggitTaggeditem.objects.all()
     serializer_class = TaggitTaggeditemSerializer
+    

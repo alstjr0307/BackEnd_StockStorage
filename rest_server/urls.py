@@ -13,13 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+
+from django.urls import path, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
-
+from member import urls
 import member.api
-
+import member.urls
 app_name='member'
 
 router = routers.DefaultRouter()
@@ -31,7 +32,10 @@ router.register('TaggitTag', member.api.TaggitTagViewSet)
 router.register('TaggitTaggedItem', member.api.TaggitTaggeditemViewSet)
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^api/doc', get_swagger_view(title='Rest API Document')),
-    url(r'^api/v1/', include((router.urls, 'member'), namespace='api')),
+    path('admin/', admin.site.urls),
+    path('api/doc', get_swagger_view(title='Rest API Document')),
+    path('api/v1/', include((router.urls, 'member'), namespace='api')),
+    path("api/v2/auth/", include('djoser.urls.authtoken')),
+    path('api/v2/auth/', include('djoser.urls')),
+
 ]

@@ -1,0 +1,35 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}주식 저장소 계정 인증{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}
+
+{% trans "Please go to the following page to activate account:" %}
+{{ protocol }}://www.stockstorage.net/{{ url|safe }}
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The {{ site_name }} team{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+<p>{% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}</p>
+
+<p>{% trans "Please go to the following page to activate account:" %}</p>
+
+<form method="post" action="{{ protocol }}://{{domain}}/{{ url|safe }}" class="inline">
+  <input type="hidden" name="uid" value="{{uid}}">
+    <input type="hidden" name="token" value="{{token}}">
+  <button type="submit" name="submit_param" value="submit_value" class="link-button">
+    This is a link that sends a POST request
+  </button>
+</form>
+
+<p>{% trans "Thanks for using our site!" %}</p>
+
+<p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>
+
+{% endblock html_body %}

@@ -37,7 +37,7 @@ def get_secret(setting, secrets=secrets):
 SECRET_KEY = get_secret("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['13.125.62.90', '127.0.0.1']
 
@@ -53,7 +53,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_swagger',
+    'django_filters',
     'member',
+    'knox',
+    'rest_framework.authtoken',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -136,9 +140,34 @@ USE_L10N = True
 
 USE_TZ = True
 
+SERVER_EMAIL= 'django@my-domain.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'alswp26@gmail.com'
+EMAIL_HOST_PASSWORD = 'alstjr0307!!'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+
+}
+
+DJOSER = {
+ 'ACTIVATION_URL': 'api/v2/auth/users/activation/',
+}
